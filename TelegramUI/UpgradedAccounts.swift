@@ -45,6 +45,7 @@ private enum LegacyApplicationSpecificPreferencesKeyValues: Int32 {
     case watchPresetSettings = 14
     case webSearchSettings = 15
     case voipDerivedState = 16
+    case flagSettings = 17
     
     var key: ValueBoxKey {
         return applicationSpecificPreferencesKey(self.rawValue)
@@ -68,6 +69,7 @@ private enum UpgradedApplicationSpecificSharedDataKeyValues: Int32 {
     case watchPresetSettings = 13
     case webSearchSettings = 14
     case contactSynchronizationSettings = 15
+    case flagSettings = 17
     
     var key: ValueBoxKey {
         return applicationSpecificSharedDataKey(self.rawValue)
@@ -96,7 +98,8 @@ private let applicationSpecificPreferencesKeyMapping: [LegacyApplicationSpecific
     .stickerSettings: .stickerSettings,
     .watchPresetSettings: .watchPresetSettings,
     .webSearchSettings: .webSearchSettings,
-    .contactSynchronizationSettings: .contactSynchronizationSettings
+    .contactSynchronizationSettings: .contactSynchronizationSettings,
+    .flagSettings: .flagSettings
 ]
 
 private func upgradedSharedDataValue(_ value: PreferencesEntry?) -> PreferencesEntry? {

@@ -142,6 +142,12 @@ public final class SharedAccountContext {
     }
     private var experimentalUISettingsDisposable: Disposable?
     
+    private var immediateFlagSettingsValue = Atomic<FlagSettings>(value: FlagSettings.defaultSettings)
+    public var immediateFlagSettings: FlagSettings {
+        return self.immediateFlagSettingsValue.with { $0 }
+    }
+    private var flagSettingsDisposable: Disposable?
+    
     public var presentGlobalController: (ViewController, Any?) -> Void = { _, _ in }
     public var presentCrossfadeController: () -> Void = {}
     
@@ -243,6 +249,15 @@ public final class SharedAccountContext {
                 let _ = immediateExperimentalUISettingsValue.swap(settings)
             }
         })
+        
+        let immediateFlagSettingsValue = self.immediateFlagSettingsValue
+        let _ = immediateFlagSettingsValue.swap(initialPresentationDataAndSettings.flagSettings)
+        self.flagSettingsDisposable = (self.accountManager.sharedData(keys: [ApplicationSpecificSharedDataKeys.flagSettings])
+            |> deliverOnMainQueue).start(next: { sharedData in
+                if let settings = sharedData.entries[ApplicationSpecificSharedDataKeys.flagSettings] as? FlagSettings {
+                    let _ = immediateFlagSettingsValue.swap(settings)
+                }
+            })
         
         let _ = self.contactDataManager?.personNameDisplayOrder().start(next: { order in
             let _ = updateContactSettingsInteractively(accountManager: accountManager, { settings in

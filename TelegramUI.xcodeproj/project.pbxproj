@@ -147,6 +147,7 @@
 		09FE756D2153F5F900A3120F /* CallRouteActionSheetItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09FE756C2153F5F900A3120F /* CallRouteActionSheetItem.swift */; };
 		9F06830921A404AB001D8EDB /* NotificationExceptionControllerNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06830821A404AB001D8EDB /* NotificationExceptionControllerNode.swift */; };
 		9F06830B21A404C4001D8EDB /* NotificationExcetionSettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F06830A21A404C4001D8EDB /* NotificationExcetionSettingsController.swift */; };
+		C957048C223B963300110EEA /* FlagSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C957048B223B963300110EEA /* FlagSettings.swift */; };
 		D000CABA21EE130D0011B15D /* MapResourceToAvatarSizes.swift in Sources */ = {isa = PBXBuildFile; fileRef = D000CAB921EE130D0011B15D /* MapResourceToAvatarSizes.swift */; };
 		D000CABC21F158AD0011B15D /* PrepareSecretThumbnailData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D000CABB21F158AD0011B15D /* PrepareSecretThumbnailData.swift */; };
 		D005808B21CAB8F000CB7CD3 /* VoipDerivedState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D005808A21CAB8F000CB7CD3 /* VoipDerivedState.swift */; };
@@ -1293,6 +1294,7 @@
 		09FE756C2153F5F900A3120F /* CallRouteActionSheetItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallRouteActionSheetItem.swift; sourceTree = "<group>"; };
 		9F06830821A404AB001D8EDB /* NotificationExceptionControllerNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationExceptionControllerNode.swift; sourceTree = "<group>"; };
 		9F06830A21A404C4001D8EDB /* NotificationExcetionSettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationExcetionSettingsController.swift; sourceTree = "<group>"; };
+		C957048B223B963300110EEA /* FlagSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagSettings.swift; sourceTree = "<group>"; };
 		D000CAB921EE130D0011B15D /* MapResourceToAvatarSizes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapResourceToAvatarSizes.swift; sourceTree = "<group>"; };
 		D000CABB21F158AD0011B15D /* PrepareSecretThumbnailData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrepareSecretThumbnailData.swift; sourceTree = "<group>"; };
 		D002A0D01E9B99F500A81812 /* SoftwareVideoSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoftwareVideoSource.swift; sourceTree = "<group>"; };
@@ -3446,6 +3448,7 @@
 				D056CD711FF1569800880D28 /* MusicPlaybackSettings.swift */,
 				D0B2F76120506E2A00D3BFB9 /* MediaInputSettings.swift */,
 				D08D7E8320A0F6020005D80C /* ExperimentalUISettings.swift */,
+				C957048B223B963300110EEA /* FlagSettings.swift */,
 				D048B33A203C777500038D05 /* RenderedTotalUnreadCount.swift */,
 				D06ECFCA20B8448E00C576C2 /* ContactSynchronizationSettings.swift */,
 				D08A10BA211DF7A80077488B /* StickerSettings.swift */,
@@ -5939,6 +5942,7 @@
 				D0EC6E211EB9F58900EBF1C3 /* InstantPageController.swift in Sources */,
 				091417F221EF4E5D00C8325A /* WallpaperGalleryController.swift in Sources */,
 				D0671F232143BDA6000A8AE7 /* TwoStepVerificationEmptyItem.swift in Sources */,
+				C957048C223B963300110EEA /* FlagSettings.swift in Sources */,
 				D0EC6E221EB9F58900EBF1C3 /* InstantPageControllerNode.swift in Sources */,
 				D0EC6E231EB9F58900EBF1C3 /* StickerPackPreviewController.swift in Sources */,
 				0941A9A4210B0E2E00EBE194 /* OpenInAppIconResources.swift in Sources */,

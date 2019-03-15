@@ -35,6 +35,7 @@ private enum DebugControllerEntry: ItemListNodeEntry {
     case redactSensitiveData(PresentationTheme, Bool)
     case enableRaiseToSpeak(PresentationTheme, Bool)
     case keepChatNavigationStack(PresentationTheme, Bool)
+    case ignoreChatFlags(PresentationTheme, Bool)
     case clearTips(PresentationTheme)
     case reimport(PresentationTheme)
     case resetData(PresentationTheme)
@@ -49,11 +50,11 @@ private enum DebugControllerEntry: ItemListNodeEntry {
                 return DebugControllerSection.logs.rawValue
             case .logToFile, .logToConsole, .redactSensitiveData:
                 return DebugControllerSection.logging.rawValue
-            case .enableRaiseToSpeak, .keepChatNavigationStack:
+            case .enableRaiseToSpeak, .keepChatNavigationStack, .ignoreChatFlags:
                 return DebugControllerSection.experiments.rawValue
-            case .clearTips, .reimport, .resetData, .animatedStickers:
+            case .clearTips, .reimport, .animatedStickers:
                 return DebugControllerSection.experiments.rawValue
-            case .versionInfo:
+            case .versionInfo, .resetData:
                 return DebugControllerSection.info.rawValue
         }
     }
@@ -76,16 +77,18 @@ private enum DebugControllerEntry: ItemListNodeEntry {
                 return 8
             case .keepChatNavigationStack:
                 return 9
-            case .clearTips:
+            case .ignoreChatFlags:
                 return 10
-            case .reimport:
+            case .clearTips:
                 return 11
-            case .resetData:
+            case .reimport:
                 return 12
             case .animatedStickers:
                 return 14
             case .versionInfo:
                 return 15
+            case .resetData:
+                return 16
         }
     }
     
@@ -182,6 +185,14 @@ private enum DebugControllerEntry: ItemListNodeEntry {
                         return settings
                     }).start()
                 })
+        case let .ignoreChatFlags(theme, value):
+            return ItemListSwitchItem(theme: theme, title: "Disable Content Restrictions", value: value, sectionId: self.section, style: .blocks, updated: { value in
+                let _ = updateFlagSettingsInteractively(accountManager: arguments.sharedContext.accountManager, { settings in
+                    var settings = settings
+                    settings.ignoreChatFlags = value
+                    return settings
+                }).start()
+            })
             case let .clearTips(theme):
                 return ItemListActionItem(theme: theme, title: "Clear Tips", kind: .generic, alignment: .natural, sectionId: self.section, style: .blocks, action: {
                     let _ = (arguments.sharedContext.accountManager.transaction { transaction -> Void in
@@ -236,7 +247,7 @@ private enum DebugControllerEntry: ItemListNodeEntry {
     }
 }
 
-private func debugControllerEntries(presentationData: PresentationData, loggingSettings: LoggingSettings, mediaInputSettings: MediaInputSettings, experimentalSettings: ExperimentalUISettings, hasLegacyAppData: Bool) -> [DebugControllerEntry] {
+private func debugControllerEntries(presentationData: PresentationData, loggingSettings: LoggingSettings, mediaInputSettings: MediaInputSettings, experimentalSettings: ExperimentalUISettings, flagSettings: FlagSettings, hasLegacyAppData: Bool) -> [DebugControllerEntry] {
     var entries: [DebugControllerEntry] = []
     
     entries.append(.sendLogs(presentationData.theme))
@@ -249,14 +260,15 @@ private func debugControllerEntries(presentationData: PresentationData, loggingS
     
     entries.append(.enableRaiseToSpeak(presentationData.theme, mediaInputSettings.enableRaiseToSpeak))
     entries.append(.keepChatNavigationStack(presentationData.theme, experimentalSettings.keepChatNavigationStack))
+    entries.append(.ignoreChatFlags(presentationData.theme, flagSettings.ignoreChatFlags))
     entries.append(.clearTips(presentationData.theme))
     if hasLegacyAppData {
         entries.append(.reimport(presentationData.theme))
     }
-    entries.append(.resetData(presentationData.theme))
     entries.append(.animatedStickers(presentationData.theme))
     entries.append(.versionInfo(presentationData.theme))
-    
+    entries.append(.resetData(presentationData.theme))
+
     return entries
 }
 
@@ -280,7 +292,7 @@ public func debugController(sharedContext: SharedAccountContext, context: Accoun
         hasLegacyAppData = FileManager.default.fileExists(atPath: statusPath)
     }
     
-    let signal = combineLatest(sharedContext.presentationData, sharedContext.accountManager.sharedData(keys: Set([SharedDataKeys.loggingSettings, ApplicationSpecificSharedDataKeys.mediaInputSettings, ApplicationSpecificSharedDataKeys.experimentalUISettings])))
+    let signal = combineLatest(sharedContext.presentationData, sharedContext.accountManager.sharedData(keys: Set([SharedDataKeys.loggingSettings, ApplicationSpecificSharedDataKeys.mediaInputSettings, ApplicationSpecificSharedDataKeys.experimentalUISettings, ApplicationSpecificSharedDataKeys.flagSettings])))
     |> map { presentationData, sharedData -> (ItemListControllerState, (ItemListNodeState<DebugControllerEntry>, DebugControllerEntry.ItemGenerationArguments)) in
         let loggingSettings: LoggingSettings
         if let value = sharedData.entries[SharedDataKeys.loggingSettings] as? LoggingSettings {
@@ -298,6 +310,8 @@ public func debugController(sharedContext: SharedAccountContext, context: Accoun
         
         let experimentalSettings: ExperimentalUISettings = (sharedData.entries[ApplicationSpecificSharedDataKeys.experimentalUISettings] as? ExperimentalUISettings) ?? ExperimentalUISettings.defaultSettings
         
+        let flagSettings: FlagSettings = (sharedData.entries[ApplicationSpecificSharedDataKeys.flagSettings] as? FlagSettings) ?? FlagSettings.defaultSettings
+        
         var leftNavigationButton: ItemListNavigationButton?
         if modal {
             leftNavigationButton = ItemListNavigationButton(content: .text(presentationData.strings.Common_Cancel), style: .regular, enabled: true, action: {
@@ -306,7 +320,7 @@ public func debugController(sharedContext: SharedAccountContext, context: Accoun
         }
         
         let controllerState = ItemListControllerState(theme: presentationData.theme, title: .text("Debug"), leftNavigationButton: leftNavigationButton, rightNavigationButton: nil, backNavigationButton: ItemListBackButton(title: presentationData.strings.Common_Back))
-        let listState = ItemListNodeState(entries: debugControllerEntries(presentationData: presentationData, loggingSettings: loggingSettings, mediaInputSettings: mediaInputSettings, experimentalSettings: experimentalSettings, hasLegacyAppData: hasLegacyAppData), style: .blocks)
+        let listState = ItemListNodeState(entries: debugControllerEntries(presentationData: presentationData, loggingSettings: loggingSettings, mediaInputSettings: mediaInputSettings, experimentalSettings: experimentalSettings, flagSettings: flagSettings, hasLegacyAppData: hasLegacyAppData), style: .blocks)
         
         return (controllerState, (listState, arguments))
     }

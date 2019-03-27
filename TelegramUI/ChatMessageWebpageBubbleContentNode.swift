@@ -133,7 +133,7 @@ final class ChatMessageWebpageBubbleContentNode: ChatMessageBubbleContentNode {
                                 break
                         }
                         if !isGallery {
-                            item.controllerInteraction.openInstantPage(item.message)
+                            item.controllerInteraction.openInstantPage(item.message, item.associatedData)
                             return
                         }
                     } else if content.type == "telegram_background" {
@@ -230,7 +230,7 @@ final class ChatMessageWebpageBubbleContentNode: ChatMessageBubbleContentNode {
 
                 var automaticPlayback = false
                 
-                if let file = webpage.file, !file.isAnimated, item.controllerInteraction.automaticMediaDownloadSettings.autoplayVideos {
+                if let file = webpage.file, (file.isAnimated && item.controllerInteraction.automaticMediaDownloadSettings.autoplayGifs) || (!file.isAnimated && item.controllerInteraction.automaticMediaDownloadSettings.autoplayVideos) {
                     var automaticDownload: InteractiveMediaNodeAutodownloadMode = .none
                     if shouldDownloadMediaAutomatically(settings: item.controllerInteraction.automaticMediaDownloadSettings, peerType: item.associatedData.automaticDownloadPeerType, networkType: item.associatedData.automaticDownloadNetworkType, authorPeerId: item.message.author?.id, contactsPeerIds: item.associatedData.contactsPeerIds, media: file) {
                         automaticDownload = .full
@@ -268,7 +268,7 @@ final class ChatMessageWebpageBubbleContentNode: ChatMessageBubbleContentNode {
                         let media = WallpaperPreviewMedia(content: .file(file, patternColor))
                         mediaAndFlags = (media, [.preferMediaAspectFilled])
                         if let fileSize = file.size {
-                            badge = dataSizeString(fileSize)
+                            badge = dataSizeString(fileSize, decimalSeparator: item.presentationData.dateTimeFormat.decimalSeparator)
                         }
                     } else {
                         mediaAndFlags = (file, [])
@@ -369,7 +369,7 @@ final class ChatMessageWebpageBubbleContentNode: ChatMessageBubbleContentNode {
         self.layer.animateAlpha(from: 0.0, to: 1.0, duration: 0.25)
     }
     
-    override func playMediaWithSound() -> (() -> Void)? {
+    override func playMediaWithSound() -> (() -> Void, Bool, Bool, Bool, ASDisplayNode?)? {
         return self.contentNode.playMediaWithSound()
     }
     
